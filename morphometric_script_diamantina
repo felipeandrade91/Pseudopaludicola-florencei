@@ -1,0 +1,475 @@
+dir()
+getwd()
+setwd("E:/Lab. Anuros Neotropicais/Pseudopaludicola/florencei sp. n/analises R/morfometria")
+
+mydata<-read.table("morphometric_data_diamantina_ok.txt", head=T)
+
+head(mydata)
+str(mydata)
+fix(mydata)
+summary(mydata)
+
+
+plot(mydata$locality, mydata$SVL, main="Snout–vent length")
+plot(mydata$locality, mydata$HL, main="Head length")
+plot(mydata$locality, mydata$HW, main="Head width")
+plot(mydata$locality, mydata$ED, main="Eye diameter")
+plot(mydata$locality, mydata$IOD, main="interorbital distance")
+plot(mydata$locality, mydata$END, main="Eye-nostril distance")
+plot(mydata$locality, mydata$SL, main="Snout length")
+plot(mydata$locality, mydata$IND, main="Internarial distance")
+plot(mydata$locality, mydata$HAL, main="Hand length")
+plot(mydata$locality, mydata$TL, main="Thigh length")
+plot(mydata$locality, mydata$TBL, main="Tibia length")
+plot(mydata$locality, mydata$TAL, main="Tarsus length")
+plot(mydata$locality, mydata$FL, main="Foot length")
+
+##############################################################
+# teste de normalidade multivariada ????????
+install.packages("MVN")
+require(MVN)
+head(mydata)
+fix(mydata)
+
+mardiaTest(mydata[,2:14], qqplot = TRUE, cov = T)
+  #dados não apresentam distribuição multivariada, com ou sem argumento 'cov'
+
+###############################################################
+mydata$locality
+
+and_poco<-mydata[which(mydata$locality == "andarai" | mydata$locality 
+== "pocoto"),]
+
+and_poco<-droplevels(and_poco)
+
+
+and_falc<-mydata[which(mydata$locality == "andarai" | mydata$locality 
+== "falcipes"),]
+
+and_falc<-droplevels(and_falc)
+
+
+and_mine<-mydata[which(mydata$locality == "andarai" | mydata$locality 
+== "mineira"),]
+
+and_mine<-droplevels(and_mine)
+
+##############################################################
+
+install.packages("coin")
+
+require("coin")
+
+install.packages("coin")
+str(mydata)
+
+#significância SVL
+
+wilcox_test(SVL~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(SVL~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(SVL~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.006888, 1.41e-05, 0.002251)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado: 0.0068880 0.0000423 0.0045020
+
+
+#significância HL
+
+wilcox_test(HL~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(HL~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(HL~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.3348, 0.5021, 0.07323)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado: 0.66960 0.66960 0.21969
+
+
+
+#significância HW
+
+wilcox_test(HW~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(HW~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(HW~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.6336, 0.3645, 0.004637)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado: 0.729000 0.729000 0.013911
+
+
+#significância ED
+
+wilcox_test(ED~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(ED~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(ED~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.8469, 0.02328, 1)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado:  1.00000 0.06984 1.00000
+
+
+
+#significância IOD
+
+wilcox_test(IOD~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(IOD~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(IOD~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.01456, 0.7515, 0.005866)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado:  0.029120 0.751500 0.017598
+
+
+
+#significância END
+
+wilcox_test(END~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(END~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(END~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.727, 0.3955, 0.4852)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado:  1 1 1
+
+
+
+#significância SL
+
+wilcox_test(SL~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(SL~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(SL~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.2509, 0.2191, 0.1596)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado:  0.4788 0.4788 0.4788
+
+
+
+#significância IND
+
+wilcox_test(IND~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(IND~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(IND~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.05154, 0.00298, 0.08788)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado:  0.10308 0.00894 0.10308
+
+
+
+#significância HAL
+
+wilcox_test(HAL~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(HAL~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(HAL~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.05989, 0.0003576, 0.9485)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado:  0.1197800 0.0010728 0.9485000
+
+
+
+#significância TL
+
+wilcox_test(TL~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(TL~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(TL~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.1357, 9.723e-06, 0.0502)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado:  1.3570e-01 2.9169e-05 1.0040e-01
+
+
+#significância TBL
+
+wilcox_test(TBL~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(TBL~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(TBL~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.2007, 1.881e-06, 0.2352)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado:  4.014e-01 5.643e-06 4.014e-01
+
+
+
+#significância TAL
+
+wilcox_test(TAL~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(TAL~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(TAL~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.05455, 0.0002172, 0.1324)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado:  0.1091000 0.0006516 0.1324000
+
+
+
+#significância FL
+
+wilcox_test(FL~locality, data = and_poco,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(FL~locality, data = and_falc,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+wilcox_test(FL~locality, data = and_mine,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+
+p.values<-c(0.001154, 3.348e-06, 0.04127)
+
+p.adjust(p.values, method = "holm", n = 3)
+#resultado:  2.3080e-03 1.0044e-05 4.1270e-02
+
+
+############################################
+#############################################
+#RandomForest
+
+install.packages("randomForest")
+head(mydata)
+str(mydata)
+require(randomForest)
+fix(mydata)
+
+pseud.rf <- randomForest(locality ~ ., data=mydata, importance=TRUE, 
+proximity=TRUE, ntree=1000)
+
+print(pseud.rf)
+
+require(rfPermute)
+
+proximity.plot(pseud.rf, dim.x = 1, dim.y = 2, legend.loc = "top", 
+circle.size = 7, point.size = 6, circle.border = 1, plot=TRUE)
+
+??proximity.plot
+fix(mydata)
+
+pseud.rf$predicted # que foi classificado como?
+pseud.rf$dim.x
+
+plot(outlier(pseud.rf), type="h", col=c("red", "blue")[as.numeric(mydata$species)]) # acima de 10 = outliers graves
+
+## Look at variable importance:
+
+round(importance(pseud.rf), 1)
+varImpPlot(pseud.rf, sort=TRUE, n.var=min(30, nrow(pseud.rf$importance)), 
+type=NULL, class=NULL, scale=TRUE, main=deparse(substitute(Variables)))
+
+x<-varUsed(pseud.rf, by.tree=FALSE, count=TRUE)
+
+packageDescription("rfPermute")$Version 
+
+MDSplot(pseud.rf, mydata$species, k=2, palette=NULL, pch=20)
+importance(pseud.rf, type=1)
+
+impHeatmap(pseud.rf, xlab = "Transmission", ylab = "Predictor")
+
+#################################################
+# Discriminant Adegenet
+
+install.packages("adegenet")
+require(adegenet)
+
+head(mydata)
+str(mydata)
+mydata2<-mydata[,2:14]
+str(mydata2)
+
+population<-mydata$locality
+
+names(population)<-rownames(mydata)
+
+# grp <- find.clusters(mydata, cluster=grupo)
+
+dapc1 <-dapc(mydata2, population, n.pca=9, n.da=3, center=TRUE, 
+scale=T, var.contrib=TRUE, pca.info=TRUE, pca.select=c("nbEig","percVar"),
+perc.pca=NULL)
+
+dapc1$pca.eig
+dapc1$pca.loadings
+
+dapc1$eig
+dapc1$loadings
+
+dapc1$eig # = autovalores
+dapc1$loadings # = autovetores
+
+par(mfrow=c(2,1))
+compoplot(dapc1, only.grp=NULL, subset=NULL, new.pred=NULL, var.contrib=TRUE,
+col=c("red2", "blue2", "green2", "yellow"), lab=NULL, legend=F, txt.leg=NULL, ncol=1, 
+grid=T, posi= "bottomleft", cleg=.9, bg=transp("white"))
+
+scatter(dapc1, xax=1, yax=2, grp=dapc1$grp, col=c("red2", "blue2", "green2", "yellow"), 
+pch=20, cex = 1.9, bg="white", solid=1, scree.da=TRUE, scree.pca=T, posi.da="bottomright",
+ posi.pca="bottomleft", bg.inset="white", ratio.da=.25, ratio.pca=.25, 
+inset.da=0.01, inset.pca=0.01, inset.solid=.4, onedim.filled=TRUE, 
+mstree=FALSE, lwd=1, lty=1, segcol="black", legend=FALSE, posi.leg="bottomright",
+cleg=1, txt.leg=levels(grp), cstar = 1, cellipse = TRUE, axesell = FALSE, 
+label = NULL, clabel = 1.5, xlim = NULL, ylim = NULL, grid = FALSE, 
+addaxes = TRUE, origin = c(0,0), include.origin = TRUE, sub = "", csub = 1.5, 
+possub = "bottomleft", cgrid = 1.5, pixmap = NULL, contour = NULL, area = NULL)
+
+par(mfrow=c(1,2))
+plot(mydata$locality, mydata$interpulse, main="Interpulse interval")
+plot(mydata$locality, mydata$pulseRate, main="Pulse rate")
+
+
+loadingplot(dapc1$var.contr) # x = dapc object
+dapc1$var.contr*100
+str(dapc1)
+
+str(dapc1)
+summary(dapc1)
+head(dapc1)
+assignplot(dapc1)
+
+#pca
+
+require(ade4)
+
+
+pca1<-dudi.pca(mydata2, center = TRUE, scale = TRUE,
+scannf = FALSE, nf = 13)
+
+str(pca1)
+
+gcol = c("red2", "blue2", "green2", "yellow")
+
+summary(mydata)
+
+summary(pca1)
+str(pca1)
+
+par(mfrow=c(2,1))
+
+s.class(dfxy = pca1$li, fac = population,  wt = rep(1, length(population)), xax = 1,
+yax = 2, cstar = 1, cellipse = 1.5, axesell = TRUE,
+label = NULL, clabel = 1, cpoint = 1.9, pch = 20,
+col = gcol, xlim = NULL, ylim = NULL,
+grid = FALSE, addaxes = TRUE, origin = c(0,0),
+include.origin = TRUE, sub = "", csub = 1, possub = "bottomleft",
+cgrid = 1, pixmap = NULL, contour = NULL, area = NULL, add.plot = FALSE)
+
+s.corcircle(pca1$co, xax = 1, yax = 2, add.plot = F, fullcircle = TRUE, box = FALSE,
+clabel = 0.75, grid = F, cgrid = 0)
+
+
+pca1$eig
+pca1$loadings
+
+pca1$co
+pca1$li
+
+#####################################################
+

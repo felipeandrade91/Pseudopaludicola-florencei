@@ -1,0 +1,223 @@
+dir()
+getwd()
+setwd("D:/Lab. Anuros Neotropicais/Pseudopaludicola/aff. pocoto - alto da Chap Diamantina/analises R")
+
+mydata<-read.table("call_data_diamantina_ok.txt", head=T)
+
+head(mydata)
+str(mydata)
+fix(mydata)
+summary(mydata)
+
+
+plot(mydata$locality, mydata$noteDur, main="note duration")
+plot(mydata$locality, mydata$interNote, main="internote interval")
+plot(mydata$locality, mydata$numbPulse, main="Number of pulses per note")
+plot(mydata$locality, mydata$PulseDur, main="pulse duration")
+plot(mydata$locality, mydata$interpulse, main="interpulse interval")
+plot(mydata$locality, mydata$pulseRate, main="Pulse rate")
+plot(mydata$locality, mydata$note.min, main="Notes per minute")
+plot(mydata$locality, mydata$domPeak, main="Peak of dominant frequency")
+plot(mydata$locality, mydata$minCallFreq, main="Minimum of dominant frequency")
+plot(mydata$locality, mydata$maxCallFreq, main="Maximum of dominant frequency")
+plot(mydata$locality, mydata$airTemp, main="air temperature")
+
+##############################################################
+# teste de normalidade multivariada ????????
+require(MVN)
+head(mydata)
+fix(mydata)
+
+mardiaTest(mydata[,2:11], qqplot = TRUE, cov = T)
+  #dados não apresentam distribuição multivariada, com ou sem argumento 'cov'
+
+mvOutlier(mydata[,2:10], qqplot = TRUE, method = c("quan", "adj.quan"))
+#gera os outliers e uma nova matriz sem estes outliers
+
+###########################
+#Testando homogeneidade dos dados
+#não apliquei!
+require(vegan)
+dis <- vegdist(mydata[,2:9])
+mod <- betadisper(dis, species)
+betadisper(dis, species, type = c("centroid"))
+
+permutest(mod, pairwise = TRUE)
+
+###############################################################
+require("coin")
+
+install.packages("coin")
+str(mydata)
+
+#significância da taxa pulse rate
+
+wilcox_test(pulse_rate~species, data = mydata,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+#p-value = 1.671e-11
+
+#significância de notes per minute
+
+wilcox_test(notes_minute~species, data = mydata,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+#p-value = 1.671e-11
+
+#significância da note duration 
+
+wilcox_test(note_dur~species, data = mydata,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+#p-value = 8.357e-12
+
+#significância de pulses per note
+
+wilcox_test(pulses_note~species, data = mydata,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+#p-value = 1.254e-10
+
+#significância de internote interval
+
+wilcox_test(inter_notes~species, data = mydata,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+#p-value = 7.02e-10
+
+#significancia de interpulse interval
+
+wilcox_test(inter_pulse~species, data = mydata,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+#p-value = 2.925e-10
+
+#significancia de pulse duration
+
+wilcox_test(pulse_dur~species, data = mydata,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+#p-value = 7.576e-05
+
+#significancia de peak dominant frequency
+
+wilcox_test(peak_freq~species, data = mydata,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+#p-value = 0.5643
+
+#significancia de air temperature
+
+wilcox_test(air_temp~species, data = mydata,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+#p-value = 0.004426
+
+#significancia de water temperature
+
+wilcox_test(h2o_temp~species, data = mydata,
+conf.int = F, conf.level = 0.95, distribution = "exact")
+
+#p-value = 0.363
+
+
+############################################
+#############################################
+#RandomForest
+
+head(mydata)
+str(mydata)
+require(randomForest)
+fix(mydata)
+
+mydata3<-mydata[,1:9] #sem min e max dom freq
+str(mydata3)
+
+pseud.rf <- randomForest(locality ~ ., data=mydata3, importance=TRUE, 
+proximity=TRUE, ntree=1000)
+
+print(pseud.rf)
+
+require(rfPermute)
+
+proximity.plot(pseud.rf, dim.x = 1, dim.y = 2, legend.loc = "top", 
+circle.size = 7, point.size = 6, circle.border = 1, plot=TRUE)
+
+??proximity.plot
+fix(mydata)
+
+pseud.rf$predicted # que foi classificado como?
+pseud.rf$dim.x
+
+plot(outlier(pseud.rf), type="h", col=c("red", "blue")[as.numeric(mydata$species)]) # acima de 10 = outliers graves
+
+## Look at variable importance:
+
+round(importance(pseud.rf), 1)
+varImpPlot(pseud.rf, sort=TRUE, n.var=min(30, nrow(pseud.rf$importance)), 
+type=NULL, class=NULL, scale=TRUE, main=deparse(substitute(Variables)))
+
+x<-varUsed(pseud.rf, by.tree=FALSE, count=TRUE)
+
+packageDescription("rfPermute")$Version 
+
+MDSplot(pseud.rf, mydata$species, k=2, palette=NULL, pch=20)
+importance(pseud.rf, type=1)
+
+impHeatmap(pseud.rf, xlab = "Transmission", ylab = "Predictor")
+
+#################################################
+# Discriminant Adegenet
+
+require(adegenet)
+
+head(mydata)
+str(mydata)
+mydata2<-mydata[,2:11]
+str(mydata2)
+
+population<-mydata$locality
+
+names(population)<-rownames(mydata)
+
+# grp <- find.clusters(mydata, cluster=grupo)
+
+dapc1 <-dapc(mydata2, population, n.pca=4, n.da=3, center=TRUE, 
+scale=T, var.contrib=TRUE, pca.info=TRUE, pca.select=c("nbEig","percVar"),
+perc.pca=NULL)
+
+dapc1$pca.eig
+dapc1$pca.loadings
+
+dapc1$eig
+dapc1$loadings
+
+dapc1$eig # = autovalores
+dapc1$loadings # = autovetores
+
+par(mfrow=c(2,1))
+compoplot(dapc1, only.grp=NULL, subset=NULL, new.pred=NULL, var.contrib=TRUE,
+col=c("red2", "blue2", "green2", "yellow"), lab=NULL, legend=F, txt.leg=NULL, ncol=1, 
+grid=T, posi= "bottomleft", cleg=.9, bg=transp("white"))
+
+scatter(dapc1, xax=1, yax=2, grp=dapc1$grp, col=c("red2", "blue2", "green2", "yellow"), pch=20, cex = 1.9, bg="white", solid=1, scree.da=TRUE, scree.pca=T, posi.da="bottomleft",
+ posi.pca="topleft", bg.inset="white", ratio.da=.25, ratio.pca=.25, 
+inset.da=0.01, inset.pca=0.01, inset.solid=.4, onedim.filled=TRUE, 
+mstree=FALSE, lwd=1, lty=1, segcol="black", legend=FALSE, posi.leg="topright",
+cleg=1, txt.leg=levels(grp), cstar = 1, cellipse = TRUE, axesell = FALSE, 
+label = levels(population), clabel = 1.5, xlim = NULL, ylim = NULL, grid = FALSE, 
+addaxes = TRUE, origin = c(0,0), include.origin = TRUE, sub = "", csub = 1.5, 
+possub = "bottomleft", cgrid = 1.5, pixmap = NULL, contour = NULL, area = NULL)
+
+par(mfrow=c(1,2))
+plot(mydata$locality, mydata$interpulse, main="Interpulse interval")
+plot(mydata$locality, mydata$pulseRate, main="Pulse rate")
+
+
+loadingplot(dapc1$var.contr) # x = dapc object
+dapc1$var.contr*100
+str(dapc1)
+
+assignplot(dapc1)
+
+#####################################################
